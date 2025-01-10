@@ -46,9 +46,10 @@ GROUP BY  issued_member_id,member_name
 HAVING COUNT(issued_id) > 1
 
 -- CTAS
--- Task 6: Create Summary Tables: Used CTAS to generate new tables based on query results 
--- each book and total book_issued_cnt**
-
+/*Task 6: Create Summary Tables: Create a new table that summarizes the total number of times each book has been issued, 
+using SELECT INTO to generate the table based on query results.
+*/
+	
 SELECT
 	bks.isbn,
 	book_title,
