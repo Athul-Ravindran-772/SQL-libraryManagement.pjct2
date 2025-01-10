@@ -152,25 +152,31 @@ WHERE issued_emp_id = 'E101'
 -- Objective: Use GROUP BY to find members who have issued more than one book.
 
 ```sql
+
 SELECT
-    issued_emp_id,
-    COUNT(*)
+             issued_member_id,
+            COUNT(issued_id) issued_books,
+            member_name
 FROM issued_status
-GROUP BY 1
-HAVING COUNT(*) > 1
+JOIN members ON issued_status.issued_member_id = members.member_id
+GROUP BY  issued_member_id,member_name
+HAVING COUNT(issued_id) > 1
+
 ```
 
-### 3. CTAS (Create Table As Select)
+### 3. SELECT INTO
 
-- **Task 6: Create Summary Tables**: Used CTAS to generate new tables based on query results - each book and total book_issued_cnt**
+- **Task 6: Create Summary Tables**: Create a new table that summarizes the total number of times each book has been issued, using SELECT INTO to generate the table based on query results.
 
 ```sql
-CREATE TABLE book_issued_cnt AS
-SELECT b.isbn, b.book_title, COUNT(ist.issued_id) AS issue_count
-FROM issued_status as ist
-JOIN books as b
-ON ist.issued_book_isbn = b.isbn
-GROUP BY b.isbn, b.book_title;
+SELECT
+	bks.isbn,
+	book_title,
+	COUNT(is_sts.issued_id) AS books_issued
+INTO books_count
+FROM books AS bks
+JOIN issued_status AS is_sts ON bks.isbn = is_sts.issued_book_isbn
+GROUP BY bks.isbn,book_title
 ```
 
 
@@ -189,15 +195,12 @@ WHERE category = 'Classic';
 
 ```sql
 SELECT 
-    b.category,
-    SUM(b.rental_price),
-    COUNT(*)
-FROM 
-issued_status as ist
-JOIN
-books as b
-ON b.isbn = ist.issued_book_isbn
-GROUP BY 1
+            category,
+            SUM(rental_price) as rental_income
+FROM books AS bks
+JOIN issued_status AS iss_sts
+	ON bks.isbn = iss_sts.issued_book_isbn
+GROUP BY category
 ```
 
 9. **List Members Who Registered in the Last 180 Days**:
